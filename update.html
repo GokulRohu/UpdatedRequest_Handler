@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Requests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .navbar {
+            background-color: #007bff;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            margin-right: 15px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .navbar a:hover {
+            color: #dce7ff;
+        }
+
+        .navbar .nav-items {
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .card button {
+            margin-right: 20px;
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .card button:hover {
+            background-color: #218838;
+        }
+
+        .card .btn-2 {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #a72828;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .card .btn-2:hover {
+            background-color: #882121;
+        }
+
+        .search-bar {
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            width: 250px;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .search-bar button {
+            padding: 8px 12px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .search-bar button:hover {
+            background-color: #0056b3;
+        }
+
+        .no-results {
+            color: gray;
+            font-size: 16px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="brand">
+            <h3>Request Manager</h3>
+        </div>
+        <div class="nav-items">
+            <a href="/">Add Request</a>
+            <a href="/update">Update Request</a>
+        </div>
+    </div>
+    <div class="search-bar">
+        <input type="search" placeholder="Search with request ID" id="search" 
+               onkeydown="if (event.key === 'Enter') fetchRequests(document.getElementById('search').value.trim())">
+        <button type="button" onclick="fetchRequests(document.getElementById('search').value.trim())">Search</button>
+    </div>    
+    <div id="container" class="container"></div>
+
+    <script>
+        async function apiRequest(url, options = {}) {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(error || 'Unknown error occurred!');
+            }
+            return response.json();
+        }
+
+        async function fetchRequests(id) {
+            id = id?id:"all";
+            const container = document.getElementById('container');
+            container.innerHTML = '';
+            try {
+                const { data } = await apiRequest(`http://localhost:3000/api/v1/requests/${id}`);
+                
+                if (data.length === 0) {
+                    container.innerHTML = `<p class="no-results">No requests found.</p>`;
+                    return;
+                }
+
+                data.forEach(request => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+
+                    const id = document.createElement('p');
+                    id.textContent = `ID: ${request._id}`;
+
+                    const description = document.createElement('p');
+                    description.textContent = `Description: ${request.description}`;
+
+                    const status = document.createElement('p');
+                    status.textContent = `Status: ${request.status}`;
+
+                    const assignedByName = document.createElement('p');
+                    assignedByName.textContent = `Assigned By: ${request.assigned_by}`;
+
+                    const assignedToName = document.createElement('p');
+                    assignedToName.textContent = `Assigned To: ${request.assigned_to}`;
+
+                   // const email = document.createElement('p');
+                    //email.textContent = `Email: ${request.email}`;
+
+                    const changeStatusButton = document.createElement('button');
+                    changeStatusButton.textContent = 'Change Status';
+                    changeStatusButton.onclick = () => toggleStatus(request._id, request.status);
+
+                    const deleteRequestButton = document.createElement('button');
+                    deleteRequestButton.textContent = 'Delete Request';
+                    deleteRequestButton.classList.add('btn-2');
+                    deleteRequestButton.onclick = () => deleteRequest(request._id);
+
+                    card.appendChild(id);
+                    card.appendChild(description);
+                    card.appendChild(status);
+                    card.appendChild(assignedByName);
+                    card.appendChild(assignedToName);
+                    //card.appendChild(email);
+                    card.appendChild(changeStatusButton);
+                    card.appendChild(deleteRequestButton);
+
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = `<p style="color: red;">Error loading requests: ${error.message}</p>`;
+            }
+        }
+
+        async function toggleStatus(requestId, currentStatus) {
+            const newStatus = currentStatus === 'In progress' ? 'Completed' : 'In progress';
+            try {
+                await apiRequest(`http://localhost:3000/api/v1/requests/${requestId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus }),
+                });
+                alert(`Status updated to: ${newStatus}`);
+                fetchRequests();
+            } catch (error) {
+                console.error(error);
+                alert('Error updating status: ' + error.message);
+            }
+        }
+
+        async function deleteRequest(requestId) {
+            try {
+                await apiRequest(`http://localhost:3000/api/v1/requests/${requestId}`, {
+                    method: 'DELETE',
+                });
+                alert(`Request with id ${requestId} is deleted successfully.`);
+                fetchRequests();
+            } catch (error) {
+                console.error(error);
+                alert('Error deleting request: ' + error.message);
+            }
+        }
+
+        fetchRequests();
+    </script>
+</body>
+</html>

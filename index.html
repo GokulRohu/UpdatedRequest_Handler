@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .navbar {
+            background-color: #007bff;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 75px;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            margin-right: 15px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .navbar a:hover {
+            color: #dce7ff;
+        }
+
+        .navbar .nav-items {
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+            margin: 75px 0px 75px 0px;
+        }
+
+        .form-container {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input, select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        .form-group input:focus, select:focus {
+            border-color: #007bff;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-container .download-button {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .form-container p {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="brand">
+            <h3>Request Manager</h3>
+        </div>
+        <div class="nav-items">
+            <a href="/">Add Request</a>
+            <a href="/update">Update Request</a>
+            <a href="/download">Download CSV</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h2>Submit Your Data</h2>
+            <form action="http://localhost:3000/submit" method="post">
+               <!-- <div class="form-group">
+                    <label for="id">RequestId</label>
+                    <input type="text" id="id" name="id" placeholder="Enter the RequestId">
+                </div> -->
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" name="description" placeholder="Enter the Description">
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select name="status" id="status">
+                        <option value="--Select an option--" disabled>--Select an option--</option>
+                        <option value="In progress">In progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="name">Assigned By</label>
+                    <input type="text" id="assigner_email" name="assigner_email" placeholder="Enter the Assigner Email address">
+                </div>
+                <div class="form-group">
+                    <label for="name">Assigned To</label>
+                    <input type="text" id="assignee_email" name="assignee_email" placeholder="Enter the Assignee Email address">
+                </div>
+                <!-- <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter the Assignee Email">
+                </div> -->
+                <button type="submit">Submit</button>
+            </form>
+            <!-- <div class="download-button">
+                <a href="/download" download>
+                    <button type="button">Download CSV</button>
+                </a>
+            </div>  -->
+            <p>All fields are required.</p>
+        </div>
+    </div>
+</body>
+</html>
